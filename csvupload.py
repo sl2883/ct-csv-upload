@@ -84,7 +84,8 @@ def process_raw_record(raw_record, type, mapping=None):
 
         if isinstance(v, dict) or isinstance(v, list):
             try:
-                v =  json.dumps(v)
+                # v =  json.dumps(v)
+                v = v["Items"]
             except Exception, e:
                 print "unable to convert %s to json string, skipping" % v
                 continue
