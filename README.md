@@ -1,63 +1,53 @@
+
 ## CleverTap python csv upload tool
 
-### Usage
-to upload user profile or events from a csv:
-- git clone the repo
-- run csvupload.py passing your CleverTap Account ID and Passcode and the absolute path to your csv file.
-- Add -d true to do a dry run.
-- Add -t to specify type of data: event or profile (defaults to profile)
-- e.g. ./csvupload.py -a WWW-YYY-ZZZZ -c AAA-BBB-CCCC -p ~/Desktop/profileSample.csv
+Please refer to the main source [here](https://github.com/CleverTap/clevertap-csv-upload)
 
-```
-arguments:
--h, --help show this help message and exit
--a ID, --id ID CleverTap Account ID
--c PASSCODE, --passcode PASSCODE CleverTap Account Passcode
--r REGION, --region REGION Dedicated CleverTap Account Region, optional
--p PATH, --path PATH Absolute path to the csv file
--m MAPPINGPATH, --mappingpath MAPPINGPATH Absolute path to a custom key json mapping
--t TYPE, --type TYPE The type of data, either profile or event, defaults to profile
--d DRYRUN, --dryrun DRYRUN Do a dry run, process records but do not upload
+This repo is focused primarily to describe how to send events to Clevertap (generic as well as charged)
 
-```
-
-NOTE: you must include one of identity, objectID, FBID or GPID, in your data. Email addresses can serve as an identity value, but the key must be identity.  
-
-### Usage for Charged events with Items array
-
+### Command line to upload charged events via CSV
 ```javascript
-python csvupload.py -a TEST-XXX-XXX-XXXX -c XXXXXXXXXXXXXXXXXXXX -r eu1 -p in.csv -t event
+python csvupload.py -a TEST-XXX-XXX-XXXX -c XXXXXXXXXXXXXXXXXXXX -r eu1 -p input-charged.csv -t event
 ```
 
-### Item value in CSV cell has to be modified to have single quotes
-
-For example
-
-#### If your json was -
+Charged events can have an items list. For example -
 ```json
-{
-    "Items": [
-      {
-        "Category": "Books",
-        "Book name": "The Millionaire next door",
-        "Quantity": 1
-      },
-      {
-        "Category": "Books",
-        "Book name": "Achieving inner zen",
-        "Quantity": 1
-      },
-      {
-        "Category": "Books",
-        "Book name": "Chuck it, lets do it",
-        "Quantity": 5
-      }
+[
+        {
+            "Category": "Books",
+            "Book name": "The Millionaire next door",
+            "Quantity": 1
+        },
+        {
+            "Category": "Books",
+            "Book name": "Achieving inner zen",
+            "Quantity": 1
+        },
+        {
+            "Category": "Books",
+            "Book name": "Chuck it, let's do it",
+            "Quantity": 5
+        }
     ]
-}
 ```
 
-#### Convert it to
+In the CSV, we provide the items list as a json list without whitespaces
 
-``` json
-"{'Items': [ { 'Category': 'Books', 'Book name': 'The Millionaire next door', 'Quantity': 1 }, { 'Category': 'Books', 'Book name': 'Achieving inner zen', 'Quantity': 1 }, { 'Category': 'Books', 'Book name': 'Chuck it, lets do it', 'Quantity': 5 } ]}"
+```json
+[ { "Category": "Books", "Book name": "The Millionaire next door", "Quantity": 1 }, { "Category": "Books", "Book name": "Achieving inner zen", "Quantity": 1 }, { "Category": "Books", "Book name": "Chuck it, let's do it", "Quantity": 5 } ]
 ```
+
+> The column name for providing items in a Charged event is Items
+
+#### Other events should continue to work the way they worked before
+
+An example command for a generic event - 
+```
+python csvupload.py -a TEST-XXX-XXX-XXXX -c XXXXXXXXXXXXXXX -r eu1 -p input-others.csv -t event
+```
+
+Please note that the CSV file needs few important columns
+
+- identity
+- type (event, profile etc.
+- evtName (Charged, Product Viewed etc.)
