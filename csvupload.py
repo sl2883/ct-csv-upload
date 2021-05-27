@@ -81,11 +81,15 @@ def process_raw_record(raw_record, type, mapping=None):
 
         if k == "Phone" and not v.startswith("+"):
             v = "+%s" % v
+            
+        if k == "Items":
+            record_data_dict[k] = v
+            prop_count += 1
+            continue
 
         if isinstance(v, dict) or isinstance(v, list):
             try:
-                # v =  json.dumps(v)
-                v = v["Items"]
+                v = json.dumps(v)
             except Exception, e:
                 print "unable to convert %s to json string, skipping" % v
                 continue
